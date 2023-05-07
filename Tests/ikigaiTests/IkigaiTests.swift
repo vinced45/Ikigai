@@ -1,11 +1,11 @@
 import XCTest
-@testable import ikigai
+@testable import Ikigai
 
-final class ikigaiTests: XCTestCase {
+final class IkigaiTests: XCTestCase {
     func testExample() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(ikigai().text, "Hello, World!")
+        XCTAssertEqual(Ikigai().text, "Hello, World!")
     }
 }
