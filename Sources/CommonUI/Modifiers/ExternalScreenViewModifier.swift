@@ -101,7 +101,7 @@ public class ExternalScreenManager: ObservableObject {
     
     public init() {}
 
-    func updateText() {
+    public func updateText() {
         string = "Changed"
     }
 }
