@@ -85,12 +85,12 @@ struct ExternalScreenViewModifier<ScreenContent: View>: ViewModifier where Scree
         window.rootViewController = controller
         window.isHidden = false
         additionalWindows.append(window)
-        //isShowingOnExternalDisplay = true
+        screenManager.isShowingOnExternalDisplay = true
     }
 
     private func screenDidDisconnect(_ screen: UIScreen) {
         additionalWindows.removeAll { $0.screen == screen }
-        //isShowingOnExternalDisplay = false
+        screenManager.isShowingOnExternalDisplay = false
     }
 }
 
