@@ -24,4 +24,8 @@ public extension View {
     func emptyState<EmptyContent>(_ isEmpty: Bool, emptyContent: @escaping () -> EmptyContent) -> some View where EmptyContent: View {
         modifier(EmptyStateViewModifier(isEmpty: isEmpty, emptyContent: emptyContent))
     }
+    
+    func externalScreen<ScreenContent>(_ showScreen: Bool, screenContent: @escaping () -> ScreenContent) -> some View where ScreenContent: View {
+        modifier(ExternalScreenViewModifier(showScreen: showScreen, screenContent: screenContent))
+    }
 }
