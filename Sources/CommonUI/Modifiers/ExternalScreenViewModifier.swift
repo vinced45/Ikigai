@@ -95,14 +95,16 @@ struct ExternalScreenViewModifier<ScreenContent: View>: ViewModifier where Scree
 }
 
 public class ExternalScreenManager: ObservableObject {
-    @Published private(set) var string = "hello"
+    @Published public var text: String
     
     @Published public var isShowingOnExternalDisplay = false
     
-    public init() {}
+    public init(text: String) {
+        self.text = text
+    }
 
     public func updateText() {
-        string = "Changed"
+        text = "Changed"
     }
 }
 
