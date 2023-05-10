@@ -95,9 +95,9 @@ struct ExternalScreenViewModifier<ScreenContent: View>: ViewModifier where Scree
 }
 
 public class ExternalScreenManager: ObservableObject {
-    @Published var string = "hello"
+    @Published private(set) var string = "hello"
     
-    @Published var isShowingOnExternalDisplay = false
+    @Published public var isShowingOnExternalDisplay = false
     
     public init() {}
 
