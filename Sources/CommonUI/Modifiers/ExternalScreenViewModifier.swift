@@ -10,37 +10,50 @@ import Combine
 import UIKit
 
 struct ExternalScreenViewModifier<ScreenContent: View>: ViewModifier where ScreenContent: View {
-    var showScreen: Bool
+    @StateObject var screenManager: ExternalScreenManager
     let screenContent: () -> ScreenContent
     
-    @ObservedObject var externalDisplayContent = ExternalDisplayContent()
     @State var additionalWindows: [UIWindow] = []
-
+    
     func body(content: Content) -> some View {
-        if showScreen {
-            screenContent()
-                .environmentObject(externalDisplayContent)
-                .onReceive(
-                    screenDidConnectPublisher,
-                    perform: screenDidConnect
-                )
-                .onReceive(
-                    screenDidDisconnectPublisher,
-                    perform: screenDidDisconnect
-                )
-        }
-        else {
-            content
-                .environmentObject(externalDisplayContent)
-                .onReceive(
-                    screenDidConnectPublisher,
-                    perform: screenDidConnect
-                )
-                .onReceive(
-                    screenDidDisconnectPublisher,
-                    perform: screenDidDisconnect
-                )
-        }
+//        if screenManager.isShowingOnExternalDisplay {
+//            screenContent()
+//                .onReceive(
+//                    screenManager.screenDidConnectPublisher,
+//                    perform: screenManager.screenDidConnect
+//                )
+//                .onReceive(
+//                    screenManager.screenDidDisconnectPublisher,
+//                    perform: screenManager.screenDidDisconnect
+//                )
+//        }
+//        else {
+//            content
+//                //.environmentObject(externalDisplayContent)
+//                .onReceive(
+//                    screenManager.screenDidConnectPublisher,
+//                    perform: screenManager.screenDidConnect
+//                )
+//                .onReceive(
+//                    screenManager.screenDidDisconnectPublisher,
+//                    perform: screenManager.screenDidDisconnect
+//                )
+//        }
+        
+        content
+            //.environmentObject(externalDisplayContent)
+            .onReceive(
+                screenDidConnectPublisher,
+                perform: screenDidConnect
+            )
+            .onReceive(
+                screenDidDisconnectPublisher,
+                perform: screenDidDisconnect
+            )
+            .sheet(isPresented: $screenManager.isShowingOnExternalDisplay, content: {
+                ExternalControlScreenView()
+                    .environmentObject(screenManager)
+            })
     }
     
     private var screenDidConnectPublisher: AnyPublisher<UIScreen, Never> {
@@ -66,24 +79,39 @@ struct ExternalScreenViewModifier<ScreenContent: View>: ViewModifier where Scree
             .first { ($0 as? UIWindowScene)?.screen == screen }
             as? UIWindowScene
 
-//        ScreenContent
-//            .environmentObject(externalDisplayContent)
-        let controller = UIHostingController(rootView: screenContent())
+        let view = screenContent()
+            .environmentObject(screenManager)
+        let controller = UIHostingController(rootView: view)
         window.rootViewController = controller
         window.isHidden = false
         additionalWindows.append(window)
-        externalDisplayContent.isShowingOnExternalDisplay = true
+        //isShowingOnExternalDisplay = true
     }
 
     private func screenDidDisconnect(_ screen: UIScreen) {
         additionalWindows.removeAll { $0.screen == screen }
-        externalDisplayContent.isShowingOnExternalDisplay = false
+        //isShowingOnExternalDisplay = false
     }
 }
 
-class ExternalDisplayContent: ObservableObject {
-
+public class ExternalScreenManager: ObservableObject {
     @Published var string = "hello"
+    
     @Published var isShowingOnExternalDisplay = false
 
+    func updateText() {
+        string = "Changed"
+    }
+}
+
+public struct ExternalControlScreenView: View {
+    @EnvironmentObject var screenManager: ExternalScreenManager
+    
+    public var body: some View {
+        Button(action: {
+            screenManager.updateText()
+        }, label: {
+            Text("Update Text")
+        })
+    }
 }
