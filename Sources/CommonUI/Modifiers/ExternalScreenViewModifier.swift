@@ -98,6 +98,8 @@ public class ExternalScreenManager: ObservableObject {
     @Published var string = "hello"
     
     @Published var isShowingOnExternalDisplay = false
+    
+    public init() {}
 
     func updateText() {
         string = "Changed"
