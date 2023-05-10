@@ -25,7 +25,7 @@ public extension View {
         modifier(EmptyStateViewModifier(isEmpty: isEmpty, emptyContent: emptyContent))
     }
     
-    func externalScreen<ScreenContent>(_ screenManager: ExternalScreenManager, screenContent: @escaping () -> ScreenContent) -> some View where ScreenContent: View {
-        modifier(ExternalScreenViewModifier(screenManager: screenManager, screenContent: screenContent))
+    func externalScreen<ScreenContent>(_ showingExternalScreen: Binding<Bool>, screenContent: @escaping () -> ScreenContent) -> some View where ScreenContent: View {
+        modifier(ExternalScreenViewModifier(showingExternalScreen: showingExternalScreen,  screenContent: screenContent))
     }
 }
