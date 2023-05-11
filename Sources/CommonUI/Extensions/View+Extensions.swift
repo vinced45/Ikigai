@@ -26,12 +26,28 @@ public extension View {
         modifier(EmptyStateViewModifier(isEmpty: isEmpty, emptyContent: emptyContent))
     }
     
-    
-    
+    @ViewBuilder
+    func ifOS<Content: View>(_ operatingSystems: OperatingSystem...,modifier: (Self) -> Content) -> some View {
+        if operatingSystems.contains(OperatingSystem.current) {
+            modifier(self)
+        } else {
+            self
+        }
+    }
+
+    func modify<T: View>(@ViewBuilder modifier: (Self) -> T) -> T {
+        modifier(self)
+    }
+}
+
+// MARK: - iOS & macOS Only Extensions
+#if os(iOS) || os(macOS)
+public extension View {
     func authenticateView<AuthContent>(_ authenticationNeeded: Binding<Bool>, authContent: @escaping () -> AuthContent) -> some View where AuthContent: View {
         modifier(AuthViewModifier(authenticationNeeded: authenticationNeeded, authContent: authContent))
     }
 }
+#endif
 
 // MARK: - iOS Only Extensions
 #if os(iOS)
@@ -45,56 +61,3 @@ public extension View {
     }
 }
 #endif
-
-public extension View {
-    /**
-    Conditionally apply modifiers depending on the target operating system.
-
-    ```
-    struct ContentView: View {
-        var body: some View {
-            Text("Unicorn")
-                .font(.system(size: 10))
-                .ifOS(.macOS, .tvOS) {
-                    $0.font(.system(size: 20))
-                }
-        }
-    }
-    ```
-    */
-    @ViewBuilder
-    func ifOS<Content: View>(
-        _ operatingSystems: OperatingSystem...,
-        modifier: (Self) -> Content
-    ) -> some View {
-        if operatingSystems.contains(OperatingSystem.current) {
-            modifier(self)
-        } else {
-            self
-        }
-    }
-    
-    /**
-        Modify the view in a closure. This can be useful when you need to conditionally apply a modifier that is unavailable on certain platforms.
-
-        For example, imagine this code needing to run on macOS too where `View#actionSheet()` is not available:
-
-        ```
-        struct ContentView: View {
-            var body: some View {
-                Text("Unicorn")
-                    .modify {
-                        #if os(iOS)
-                        $0.actionSheet(…)
-                        #else
-                        $0
-                        #endif
-                    }
-            }
-        }
-        ```
-        */
-        func modify<T: View>(@ViewBuilder modifier: (Self) -> T) -> T {
-            modifier(self)
-        }
-}

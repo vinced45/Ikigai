@@ -6,6 +6,7 @@
 //
 
 import Foundation
+#if os(macOS) || os(iOS)
 import LocalAuthentication
 import SwiftUI
 
@@ -56,3 +57,4 @@ public class AuthViewModel: ObservableObject {
         }
     }
 }
+#endif
