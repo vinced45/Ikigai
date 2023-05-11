@@ -7,7 +7,9 @@
 
 import SwiftUI
 import Combine
+#if os(iOS)
 import UIKit
+
 
 struct ExternalScreenViewModifier<ScreenContent: View>: ViewModifier where ScreenContent: View {
     @Binding var showingExternalScreen: Bool
@@ -62,3 +64,4 @@ struct ExternalScreenViewModifier<ScreenContent: View>: ViewModifier where Scree
         showingExternalScreen = false
     }
 }
+#endif
